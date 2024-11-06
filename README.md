@@ -14,20 +14,13 @@ The live system should be as vanilla as possible with a few modifications.
 - Other block devices (e.g. local disks) can be mounted under
   /mnt/target-host/ .
 
-# Things to implement in live-key project
+## Modifications
 
-## Setting up keyboard layout
+### Keyboard layout files
 
-I mostly use a us layout SiliconGraphics pc101 keyboard but occasionally need
-to use the se layout ThinkPad pc105 keyboard.
+Package console-setup is installed in live system and /etc/default contains
+files for setting up SiliconGraphics and ThinkPad keyboards.
 
-Package console-setup needs to be installed in live system. (chroot)
-Copy /etc/default/keyboard to
-config/includes.chroot/etc/default/keyboard.ThinkPad
-Copy /etc/default/keyboard.SiliconGraphics to
-config/includes.chroot/etc/default/keyboard.SiliconGraphics
-
-In live system I can setup keyboard as
 ```sh
 # setupcon -k -v ThinkPad
 ```
@@ -36,9 +29,9 @@ or
 # setupcon -k -v SiliconGraphics
 ```
 
-Package sudo is required.
+## Things to implement in live-key project
 
-## Bring down all network devices except loopback
+### Bring down all network devices except loopback
 
 To airgap the live system all network interfaces except loopback will be
 brought down.
@@ -52,7 +45,7 @@ $ for LINK in `ls /sys/class/net/ | grep --invert-match lo`; do; sudo ip link se
 This should be executed as a component of live-config (i.e. late userspace
 boot) and need to be added to config/includes.chroot/lib/live/config/ .
 
-## /home on encrypted filesystem image
+### /home on encrypted filesystem image
 
 This requires package cryptsetup on both build host and live system.
 

@@ -1,0 +1,10 @@
+# KEYBOARD CONFIGURATION FILE for SiliconGraphics keyboard
+
+# Consult the keyboard(5) manual page.
+
+XKBMODEL="pc101"
+XKBLAYOUT="us"
+XKBVARIANT=""
+XKBOPTIONS="caps:super,compose:ralt"
+
+BACKSPACE="guess"
