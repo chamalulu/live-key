@@ -2,7 +2,7 @@ ISO_IMAGE := live-image-amd64.hybrid.iso
 CONFIG_SENTINEL := config/.sentinel
 AUTO_CONFIG := auto/config
 
-# target: help - Display callable targets.
+# target: help - Display callable targets
 help:
 	@grep -E "^# target:" Makefile
 
@@ -23,6 +23,8 @@ config: $(CONFIG_SENTINEL)
 
 $(ISO_IMAGE): $(CONFIG_SENTINEL)
 	sudo lb build
+	# Update timestamp of image
+	sudo touch $(ISO_IMAGE)
 
 # target: build - Build the image
 build: $(ISO_IMAGE)
