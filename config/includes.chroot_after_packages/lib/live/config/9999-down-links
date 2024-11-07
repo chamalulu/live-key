@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for LINK in `ls /sys/class/net/ | grep --invert-match lo`; do
+	ip link set $LINK down
+done
+

@@ -29,8 +29,6 @@ or
 # setupcon -k -v SiliconGraphics
 ```
 
-## Things to implement in live-key project
-
 ### Bring down all network devices except loopback
 
 To airgap the live system all network interfaces except loopback will be
@@ -38,12 +36,17 @@ brought down.
 There are of course much more secure and/or robust ways to isolate a live
 system but we'll start here.
 
+live-config runs the component `9999-down-links` in late userspace boot.
+
 ```sh
-$ for LINK in `ls /sys/class/net/ | grep --invert-match lo`; do; sudo ip link set $LINK down; done;
+#!/bin/sh
+
+for LINK in `ls /sys/class/net/ | grep --invert-match lo`; do
+    ip link set $LINK down
+done
 ```
 
-This should be executed as a component of live-config (i.e. late userspace
-boot) and need to be added to config/includes.chroot/lib/live/config/ .
+## Things to implement in live-key project
 
 ### /home on encrypted filesystem image
 
