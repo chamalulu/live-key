@@ -4,4 +4,6 @@ set -e
 
 lb config noauto \
 	--architectures amd64 \
+	--bootappend-live "boot=live components persistence persistence-encryption=luks persistence-media=removable-usb" \
 	"${@}"
+

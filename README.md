@@ -19,7 +19,7 @@ The live system should be as vanilla as possible with a few modifications.
 ### Keyboard layout files
 
 Package console-setup is installed in live system and /etc/default contains
-files for setting up SiliconGraphics and ThinkPad keyboards.
+keyboard files for setting up SiliconGraphics and ThinkPad keyboards.
 
 ```sh
 # setupcon -k -v ThinkPad
@@ -46,16 +46,25 @@ for LINK in `ls /sys/class/net/ | grep --invert-match lo`; do
 done
 ```
 
-## Things to implement in live-key project
-
 ### /home on encrypted filesystem image
 
-This requires package cryptsetup on both build host and live system.
+Package cryptsetup is installed in live system.
 
-Add `persistence persistence-encryption=luks` to boot parameters.
+`persistence persistence-encryption=luks persistence-media=removable-usb` is
+added to boot parameters to make live-boot only consider luks encrypted
+filesystem on removable usb.
 
-Also add `persistence-media=removable-usb persistence-storage=file` to boot
-parameters to make live-boot only consider filesystem image `persistence` on
-binary image filesystem.
+The image of the encrypted filesystem is created by the script
+`create_persistence.sh` given the name of the image to create.
 
+## Testing in virtual machine
+
+The Makefile has two phony test targets, `test` and `ptest`.
+
+`test` dependes on the iso image. It starts a VM with the iso image attached to the cdrom drive.
+
+`ptest` depends on the iso image and an image of an encrypted peristence block device.
+It starts a VM with the iso image as in `test` and also the persistence image attached as removable usb storage.
+
+## Things to implement in live-key project
 

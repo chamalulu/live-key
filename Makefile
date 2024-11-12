@@ -1,6 +1,7 @@
-ISO_IMAGE := live-image-amd64.hybrid.iso
-CONFIG_SENTINEL := config/.sentinel
 AUTO_CONFIG := auto/config
+CONFIG_SENTINEL := config/.sentinel
+ISO_IMAGE := live-image-amd64.hybrid.iso
+PERSISTENCE := persistence
 
 # target: help - Display callable targets
 help:
@@ -8,15 +9,15 @@ help:
 
 # target: clean - Clean
 clean:
+	rm -f $(CONFIG_SENTINEL)
 	sudo lb clean
-	@rm -f $(CONFIG_SENTINEL)
 
 $(CONFIG_SENTINEL): $(AUTO_CONFIG)
 	# Always clean before config
+	rm -f $(CONFIG_SENTINEL)
 	sudo lb clean
-	@rm -f $(CONFIG_SENTINEL)
 	lb config
-	@touch $(CONFIG_SENTINEL)
+	touch $(CONFIG_SENTINEL)
 
 # target: config - Repopulate config directory (from auto/config)
 config: $(CONFIG_SENTINEL)
@@ -33,4 +34,14 @@ build: $(ISO_IMAGE)
 test: $(ISO_IMAGE)
 	kvm -m 4G -cdrom $(ISO_IMAGE)
 
-.PHONY: help clean config build test
+$(PERSISTENCE):
+	./create_persistence.sh $(PERSISTENCE)
+
+# target: ptest - Boot image in virtual machine with attached encrypted persistence
+ptest: $(ISO_IMAGE) $(PERSISTENCE)
+	kvm -m 4G -usb \
+	-cdrom $(ISO_IMAGE) \
+	-blockdev driver=file,node-name=persistencedrive,filename=$(PERSISTENCE) \
+	-device usb-storage,drive=persistencedrive,removable=true
+
+.PHONY: help clean config build test ptest
