@@ -23,5 +23,4 @@ live-image-amd64.hybrid.iso
 live-image-amd64.hybrid.iso.zsync
 live-image-amd64.packages
 
-persistence
-
+persistence.luks

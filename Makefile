@@ -1,7 +1,7 @@
 AUTO_CONFIG := auto/config
 CONFIG_SENTINEL := config/.sentinel
 ISO_IMAGE := live-image-amd64.hybrid.iso
-PERSISTENCE := persistence
+PERSISTENCE := persistence.luks
 
 # target: help - Display callable targets
 help:
