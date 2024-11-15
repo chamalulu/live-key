@@ -44,4 +44,11 @@ ptest: $(ISO_IMAGE) $(PERSISTENCE)
 	-blockdev driver=file,node-name=persistencedrive,filename=$(PERSISTENCE) \
 	-device usb-storage,drive=persistencedrive,removable=true
 
-.PHONY: help clean config build test ptest
+# target: update - Update image on my USB stick
+# myUSB should be a symlink to the correct device.
+# Preferrably one under /dev/disk/by-id which contains descriptive symlinks to
+# real devices. update_usb.sh will canonicalize.
+update: $(ISO_IMAGE)
+	./update_usb.sh $(ISO_IMAGE) myUSB
+
+.PHONY: help clean config build test ptest update
