@@ -1,30 +1,43 @@
 # Live-key
 
 The goal of this project is to set up a live-system primarily to host my GPG
-signing key.
+keys.
+
+There are reasons for not having your primary (certifying) private key stored on
+your every-day work machine. The canonical solution is to have another air-
+gapped machine where you can sign keys transferred by 5¼" floppy disk.
+I think a more practical (albeit less secure) way is to have a live system on an
+USB stick without networking which you reboot into when you need to sign a key.
+
+I'm sure this has been solved a thousand times before but I'm all for being the
+1,001st guy inventing the wheel all over again.
 
 The live system should be as vanilla as possible with a few modifications.
 
-- Network interfaces should be down by default. They can be manually set up
-  from within the live system after boot.
-- /home should reside on an encrypted filesystem image in the binary. It should
-  survive rebuilds of the live system.
-- If other filesystems exist on the medium, they are mounted under
-  /mnt/live-key/<label> after boot.
-- Other block devices (e.g. local disks) can be mounted under
-  /mnt/target-host/ .
+- Networking is disabled.
+  (&#x26a0; Currently implemented in the lamest possible way.)
+- `/home` is persisted on an encrypted writable filesystem on the medium and it
+  must survive rebuilds of the live system. (&#x2705; Solved)
+- A non-encrypted filesystem for transfers also reside on the medium. A rebuild
+  of the live system should preserve its contents if space allows. It should be
+  mounted under `/mnt/live-key/transfer` after boot. (&#x1f6a7; The mounting is
+  not yet done.)
+- Block devices on target host may of course also be mounted but this should not
+  be done automatically.
 
 ## Modifications
 
 ### Keyboard layout files
 
 Package console-setup is installed in live system and /etc/default contains
-keyboard files for setting up SiliconGraphics and ThinkPad keyboards.
+keyboard files for setting up my SiliconGraphics and ThinkPad keyboards.
 
 ```sh
 # setupcon -k -v ThinkPad
 ```
+
 or
+
 ```sh
 # setupcon -k -v SiliconGraphics
 ```
@@ -54,17 +67,35 @@ Package cryptsetup is installed in live system.
 added to boot parameters to make live-boot only consider luks encrypted
 filesystem on removable usb.
 
-The image of the encrypted filesystem is created by the script
+The image of the encrypted filesystem can be created by the script
 `create_persistence.sh` given the name of the image to create.
 
 ## Testing in virtual machine
 
 The Makefile has two phony test targets, `test` and `ptest`.
 
-`test` dependes on the iso image. It starts a VM with the iso image attached to the cdrom drive.
+`test` dependes on the iso image. It starts a VM with the iso image attached to
+the cdrom drive.
 
-`ptest` depends on the iso image and an image of an encrypted peristence block device.
-It starts a VM with the iso image as in `test` and also the persistence image attached as removable usb storage.
+`ptest` depends on the iso image and an image of an encrypted peristence block
+device. It starts a VM with the iso image as in `test` and also the persistence
+image attached as removable usb storage.
 
-## Things to implement in live-key project
+### Updating the USB drive
 
+The Makefile has a phony target `update`. It depends on the iso image. It
+executes `update_usb.sh` with the iso image and `myUSB` as parameters.
+
+`myUSB` should be a symlink to the usb block device.
+
+## TODOs
+
+### `myUSB` target selection
+
+A target for `myUSB` could be defined in the Makefile which prompts the user for
+a target in `/dev/disk/by-id/` to set up the symlink to.
+
+### Bootstrap script and target
+
+The target `update` requires an existing Live-key environment on a USB drive.
+Provide a script and target to create one from scratch.
