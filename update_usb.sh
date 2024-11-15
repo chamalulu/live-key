@@ -66,12 +66,12 @@ if [ -z "$PST_START" -o -z "$PST_SIZE" -o -z "$P4_START" ]; then
 fi
 
 # Backup PST
-PST_BACKUP=pst.bup
+PST_BACKUP=`mktemp pst_XXX.backup`
 echo "Backing up encrypted persistence partition to $PST_BACKUP ..."
-sudo dd if=$PST_PART of=$PST_BACKUP bs=1M oflag=sync status=progress conv=excl
+sudo dd if=$PST_PART of=$PST_BACKUP bs=1M oflag=sync status=progress
 
 # Backup contents of P4
-P4_BACKUP=p4.tar.gz
+P4_BACKUP=`mktemp p4_XXX.tar.gz`
 echo "Backing up contents of fourth partition to $P4_BACKUP ..."
 sudo mount -r $P4_PART /mnt
 sudo tar -caf $P4_BACKUP -C /mnt .
