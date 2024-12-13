@@ -2,3 +2,6 @@ console-setup
 cryptsetup
 gnupg
 pass
+man-db
+manpages
+easy-rsa
